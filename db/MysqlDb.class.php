@@ -30,11 +30,18 @@ class MysqlDb {
     // handles queries resulting in output
     public function fetch_array( $query ) {
         $mysql_query = mysqli_query($this->mysql, $query);
+      $return = [];
         while( $result = mysqli_fetch_array($mysql_query, MYSQLI_ASSOC ) ) {
             $return[] = $result;
         }
-        return $return;
+        return $return  ;
     }
+  
+  public function fetch_single( $query ) {
+    $mysql_query = mysqli_query($this->mysql, $query);
+    $result = mysqli_fetch_array($mysql_query, MYSQLI_ASSOC );
+    return $result;
+  }
 
     // handles statements: update, insert etc.
     public function query( $query ) {
