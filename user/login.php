@@ -15,7 +15,7 @@ if (!isset($username) && !isset($mail)) {
 
 if (!isset($password)) {
   $response['status'] = StatusResponse::RES_BAD_REQUEST;
-  $response['msg'] = "password required";
+  $response['msg'][] = "password required";
 }
 
 
@@ -31,28 +31,26 @@ if ($response['status'] == ""){
      $passwordHash = new PasswordHash(8, TRUE);
      if(!$passwordHash->CheckPassword($password, $data['user_pass'])) {
        $response['status'] = StatusResponse::RES_NO_AUTH;
-       $response['msg'] = "wrong credetial";
+       $response['msg'][] = "wrong credetial";
      } else {
        $token = Token::getTokenByUserId($data['ID']);
        if (!$token || AuthToken::isExpire($token['expire'])) {
          Token::deleteTokenByUserId($data['ID']);
          $token = AuthToken::getToken($data['ID']);
          $expire = strtotime(date('Y-m-d', strtotime(' + 5 days')));
-         Token::setTokenByUserId($data['ID'], $token, $expire);
-       } else {
-         $token = $token['token'];
+         $token = Token::setTokenByUserId($data['ID'], $token, $expire);
        }
   
        $data['token'] = $token;
        $response['status'] = StatusResponse::RES_OK;
-       $response['msg'] = "ok";
+       $response['msg'][] = "ok";
        $response['data'] = $data;
      }
     
 
   } else {
     $response['status'] = StatusResponse::RES_NO_AUTH;
-    $response['msg'] = "wrong credetial";
+    $response['msg'][] = "wrong credetial";
   }
 }
 

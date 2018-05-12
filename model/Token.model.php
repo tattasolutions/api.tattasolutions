@@ -38,6 +38,10 @@ class Token extends Model{
     $query = "INSERT INTO " . self::TABLE . " (user_id, token, expire) VALUES (" . $userId . ", '" . $token . "', FROM_UNIXTIME(" . $expire . "))";
     self::printQuery($query);
     $result = $mysql->query($query);
+    
+    if ($result) {
+      $result = self::getTokenByUserId($userId);
+    }
   
     $mysql->disconect();
     return $result;

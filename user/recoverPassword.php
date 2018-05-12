@@ -29,15 +29,15 @@ if (!isset($mail)) {
       mail($data['user_email'], 'Recover Password', "Username: " . $data['user_login'] . ", Password: " . $newPassword . ", Mail: " . $data['user_email']);
       
       $response['status'] = StatusResponse::RES_OK;
-      $response['msg'] = "ok";
+      $response['msg'][] = "ok";
     } else {
       $response['status'] = StatusResponse::RES_ERROR;
-      $response['msg'] = "error update password";
+      $response['msg'][] = "error update password";
     }
 
   } else {
     $response['status'] = StatusResponse::RES_NO_RESULT;
-    $response['msg'] = "no mail exists";
+    $response['msg'][] = "no mail exists";
   }
 }
 
