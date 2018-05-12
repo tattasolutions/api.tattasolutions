@@ -17,7 +17,18 @@ class Token extends Model{
     
     $mysql->disconect();
     return $data;
+  }
+  
+  public static function deleteTokenByUserId($userId) {
+    $mysql = new MysqlDb();
+    $mysql->conect();
     
+    $query = "DELETE FROM " . self::TABLE . " WHERE user_id=" . $userId;
+    self::printQuery($query);
+    $data = $mysql->query($query);
+    
+    $mysql->disconect();
+    return $data;
   }
 
   public static function setTokenByUserId($userId, $token, $expire) {

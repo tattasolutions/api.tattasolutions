@@ -19,31 +19,40 @@ if (!isset($password)) {
 }
 
 
- if ($response['status'] == ""){
+if ($response['status'] == ""){
   if (isset($username)){
-    $data = User::getUserByUsernamePassword($username, $password);
+    $data = User::getUserByUsername($username);
   } else if (isset($mail)){
-    $data = User::getUserByMailPassword($mail, $password);
+    $data = User::getUserByMail($mail);
   }
   
    if ($data) {
+  
+     $passwordHash = new PasswordHash(8, TRUE);
+     if(!$passwordHash->CheckPassword($password, $data['user_pass'])) {
+       $response['status'] = StatusResponse::RES_NO_AUTH;
+       $response['msg'] = "wrong credetial";
+     } else {
+       $token = Token::getTokenByUserId($data['ID']);
+       if (!$token || AuthToken::isExpire($token['expire'])) {
+         Token::deleteTokenByUserId($data['ID']);
+         $token = AuthToken::getToken($data['ID']);
+         $expire = strtotime(date('Y-m-d', strtotime(' + 5 days')));
+         Token::setTokenByUserId($data['ID'], $token, $expire);
+       } else {
+         $token = $token['token'];
+       }
+  
+       $data['token'] = $token;
+       $response['status'] = StatusResponse::RES_OK;
+       $response['msg'] = "ok";
+       $response['data'] = $data;
+     }
     
-    $token = Token::getTokenByUserId($data['ID']);
-    if (!$token || $token['expire'] < strtotime(date('Y-m-d'))) {
-      $token = AuthToken::getToken($data['ID']);
-      $expire = strtotime(date('Y-m-d', strtotime(' + 5 days')));
-      Token::setTokenByUserId($data['ID'], $token, $expire);
-    } else {
-      $token = $token['token'];
-    }
-    
-    $data['token'] = $token;
-    $response['status'] = StatusResponse::RES_OK;
-    $response['msg'] = "ok";
-    $response['data'] = $data;
+
   } else {
-    $response['status'] = StatusResponse::RES_NO_RESULT;
-    $response['msg'] = "no result";
+    $response['status'] = StatusResponse::RES_NO_AUTH;
+    $response['msg'] = "wrong credetial";
   }
 }
 
