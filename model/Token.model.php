@@ -5,7 +5,7 @@ require_once "Model.php";
 
 
 class Token extends Model{
-  private const TABLE  = PREFIX_TABLE . "token";
+  const TABLE  = PREFIX_TABLE . "token";
   
   public static function getTokenByUserId($userId) {
     $mysql = new MysqlDb();

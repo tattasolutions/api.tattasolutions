@@ -1,10 +1,12 @@
 <?php
+require_once "../config.php";
+
 class MysqlDb {
     // mysql server configuration
-    private $dbhost = 'localhost';
-    private $dbuser = 'unmanned_api';
-    private $dbpass = 'eGSFZ9Op#NZ%';
-    private $dbname = 'unmanned_database';
+    private $dbhost = DB_HOST;
+    private $dbuser = DB_USER;
+    private $dbpass = DB_PASS;
+    private $dbname = DB_NAME;
     protected $mysql;
 
     // check if connection is alive, if not establish it

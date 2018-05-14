@@ -22,6 +22,7 @@ if (!isset($mail)) {
     $passwordHash = new PasswordHash(8, TRUE);
     
     $newPassword = trim(Password::generate());
+    #$newPassword = "suino2018!";
     $newPasswordHash = $passwordHash->HashPassword($newPassword);
     if (User::updatePassword($data['ID'], $newPasswordHash)) {
       Token::deleteTokenByUserId($data['ID']);

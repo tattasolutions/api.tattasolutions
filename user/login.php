@@ -40,7 +40,11 @@ if ($response['status'] == ""){
          $expire = strtotime(date('Y-m-d', strtotime(' + 5 days')));
          $token = Token::setTokenByUserId($data['ID'], $token, $expire);
        }
+       
+       //--- profile ---
+       $profile = Profile::getUserProfile($data['ID']);
   
+       $data['profile'] = $profile;
        $data['token'] = $token;
        $response['status'] = StatusResponse::RES_OK;
        $response['msg'][] = "ok";

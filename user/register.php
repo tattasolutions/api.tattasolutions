@@ -2,6 +2,8 @@
 require_once "../config.php";
 require_once "../model/User.model.php";
 require_once "../model/Token.model.php";
+require_once "../model/Profile.model.php";
+require_once "../model/ProfileMetaData.model.php";
 require_once "../utils/Password.class.php";
 
 extract($_REQUEST);
@@ -86,11 +88,18 @@ if ($response['status'] == ""){
   $passwordHash = new PasswordHash(8, TRUE);
   $activationKey = time() . ":" . $passwordHash->HashPassword($password);
   $password = $passwordHash->HashPassword($password);
-  $newUser = User::insert($username, $mail, $password, $cf, $name, $surname, $niceName, $displayName, $activationKey, $address, $birthDate, $typeUser, $typeManifactur, $typePilot);
+  $newUser = User::insert($username, $mail, $password, $niceName, $displayName, $activationKey);
   
   if ($newUser) {
     //--- dati utente ---
-    //TODO inserire il resto dei dati utente
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_CF_VAT, $cf);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_NAME, $name);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_SURNAME, $surname);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_ADDRESS, $address);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_BIRTHDATE, $birthDate);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_USER, $typeUser);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_MANUFACTUR, $typeManifactur);
+    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_PILOT, $typePilot);
   
     //--- token ---
     $token = AuthToken::getToken($newUser['ID']);
