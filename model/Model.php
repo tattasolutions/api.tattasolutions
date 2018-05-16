@@ -5,7 +5,7 @@ class Model {
   const TABLE = "";
   public static function printQuery($query) {
     if (PRINT_QUERY) {
-      echo "<br>" . $query;
+      echo "<div>" . $query . "</div>";
     }
   }
   

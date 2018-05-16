@@ -7,8 +7,8 @@ class AuthToken {
     return sha1($token);
   }
   
-  public static function isExpire($token) {
-    return strtotime($token) < strtotime(date('Y-m-d'));
+  public static function isExpire($tokenExpire) {
+    return strtotime($tokenExpire) < strtotime(date('Y-m-d'));
   }
   
 }

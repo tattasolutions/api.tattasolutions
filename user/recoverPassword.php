@@ -4,6 +4,16 @@ require_once "../model/User.model.php";
 require_once "../model/Token.model.php";
 require_once "../utils/Password.class.php";
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../vendor/PHPMailer/src/Exception.php';
+require '../vendor/PHPMailer/src/PHPMailer.php';
+require '../vendor/PHPMailer/src/SMTP.php';
+
+
+require_once "../vendor/PHPMailer/src/PHPMailer.php";
+
 extract($_REQUEST);
 
 $response = [];
@@ -27,7 +37,27 @@ if (!isset($mail)) {
     if (User::updatePassword($data['ID'], $newPasswordHash)) {
       Token::deleteTokenByUserId($data['ID']);
   
-      mail($data['user_email'], 'Recover Password', "Username: " . $data['user_login'] . ", Password: " . $newPassword . ", Mail: " . $data['user_email']);
+      //--- invio mail ---
+      $messaggio = new PHPMailer;
+      /*$messaggio->isSMTP();
+      $messaggio->Host = 'smtp.gmail.com';
+      $messaggio->SMTPAuth = true;
+      $messaggio->Username = 'belfiore.giovanni@gmail.com';
+      $messaggio->Password = '';
+      $messaggio->SMTPSecure = 'tls';
+      $messaggio->Port = 587;*/
+      $messaggio->setFrom(MITTENTE_MAIL, MITTENTE_NAME);
+      $messaggio->addAddress($mail, $data['user_login']);
+      $messaggio->Subject  = 'UnManned4You - Recover Password';
+      $messaggio->Body     = "Username: " . $data['user_login'] . ", Password: " . $newPassword . ", Mail: " . $data['user_email'];
+      if(!$messaggio->send()) {
+        $response['sendMail']['status'] = false;
+        $response['sendMail']['message'] = "Mailer error: " . $messaggio->ErrorInfo;
+      } else {
+        $response['sendMail']['status'] = true;
+        $response['sendMail']['message'] = "ok";
+      }
+      //------------------
       
       $response['status'] = StatusResponse::RES_OK;
       $response['msg'][] = "ok";

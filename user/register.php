@@ -90,22 +90,24 @@ if ($response['status'] == ""){
   $password = $passwordHash->HashPassword($password);
   $newUser = User::insert($username, $mail, $password, $niceName, $displayName, $activationKey);
   
+  $profile = [];
   if ($newUser) {
     //--- dati utente ---
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_CF_VAT, $cf);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_NAME, $name);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_SURNAME, $surname);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_ADDRESS, $address);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_BIRTHDATE, $birthDate);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_USER, $typeUser);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_MANUFACTUR, $typeManifactur);
-    Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_PILOT, $typePilot);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_CF_VAT, $cf);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_NAME, $name);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_SURNAME, $surname);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_ADDRESS, $address);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_BIRTHDATE, $birthDate);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_USER, $typeUser);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_MANUFACTUR, $typeManifactur);
+    $profile[] = Profile::setUserProfileKey($newUser['ID'], ProfileMetaData::FIELD_ID_PILOT, $typePilot);
   
     //--- token ---
     $token = AuthToken::getToken($newUser['ID']);
     $expire = strtotime(date('Y-m-d', strtotime(' + 5 days')));
     $token = Token::setTokenByUserId($newUser['ID'], $token, $expire);
     $newUser['token'] = $token;
+    $newUser['profile'] = $profile;
   
     $response['status'] = StatusResponse::RES_OK;
     $response['msg'][] = "ok";

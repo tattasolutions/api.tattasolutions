@@ -2,6 +2,7 @@
 require_once "../config.php";
 require_once "../model/User.model.php";
 require_once "../model/Token.model.php";
+require_once "../model/Profile.model.php";
 
 extract($_REQUEST);
 

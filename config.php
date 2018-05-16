@@ -20,6 +20,9 @@ if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) {
 }
 
 
+const MITTENTE_MAIL = "info@unmanned4you.com";
+const MITTENTE_NAME = "UnManned4You not replay";
+
 function p($data) {
   echo "<pre>";
   print_r($data);

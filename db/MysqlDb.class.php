@@ -41,7 +41,10 @@ class MysqlDb {
   
   public function fetch_single( $query ) {
     $mysql_query = mysqli_query($this->mysql, $query);
-    $result = mysqli_fetch_array($mysql_query, MYSQLI_ASSOC );
+    $result = false;
+    if($mysql_query) {
+      $result = mysqli_fetch_array($mysql_query, MYSQLI_ASSOC );
+    }
     return $result;
   }
 

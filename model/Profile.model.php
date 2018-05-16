@@ -23,7 +23,7 @@ class Profile extends Model{
     $mysql = new MysqlDb();
     $mysql->conect();
     
-    $query = "SELECT * FROM " . self::TABLE . " WHERE user_id=" . $userId . "and field_id=" . $key;
+    $query = "SELECT * FROM " . self::TABLE . " WHERE user_id=" . $userId . " and field_id=" . $key;
     self::printQuery($query);
     $data = $mysql->fetch_single($query);
     $mysql->disconect();
@@ -37,11 +37,11 @@ class Profile extends Model{
     $query = "INSERT INTO " . self::TABLE .
       "(field_id, user_id, value, last_updated) " .
       "VALUES ".
-      "(" . $key . ", " . $userId . ", " . $value . ", CURDATE())";
+      "(" . $key . ", " . $userId . ", '" . $value . "', CURDATE())";
     self::printQuery($query);
     $result = $mysql->query($query);
     if ($result) {
-      $result = self::geByUserIdKey($userId, $key);
+      $result = self::getUserProfileByKey($userId, $key);
     }
   
     $mysql->disconect();
