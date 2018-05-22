@@ -50,7 +50,8 @@ class MysqlDb {
 
     // handles statements: update, insert etc.
     public function query( $query ) {
-        return mysqli_query($this->mysql, $query);
+      $reult = mysqli_query($this->mysql, $query);
+      return $this->mysql->insert_id;
     }
 }
 

@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE);
+
 require_once "utils/AuthToken.class.php";
 require_once "utils/StatusResponse.class.php";
 require_once "utils/PasswordHash.class.php";

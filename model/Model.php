@@ -8,16 +8,5 @@ class Model {
       echo "<div>" . $query . "</div>";
     }
   }
-  
-  public static function getById($id) {
-    $mysql = new MysqlDb();
-    $mysql->conect();
-    
-    $query = "SELECT * FROM " . self::TABLE . " WHERE ID='" . $id . "'";
-    self::printQuery($query);
-    $data = $mysql->fetch_single($query);
-    $mysql->disconect();
-    return $data;
-  }
 }
 ?>

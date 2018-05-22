@@ -8,5 +8,6 @@ class StatusResponse {
   const RES_TOKEN_EXPIRE = 412;
   const RES_TOKEN_INVALID = 413;
   const RES_ERROR = 500;
+  const RES_ERROR_DB = 501;
 }
 ?>
