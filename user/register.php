@@ -39,7 +39,7 @@ if (!isset($password)) {
   $response['msg'][] = "password required";
 }
 
-if (!isset($cf)) {
+/*if (!isset($cf)) {
   $response['status'] = StatusResponse::RES_BAD_REQUEST;
   $response['msg'][] = "cf/vat required";
 }
@@ -62,7 +62,7 @@ if (!isset($address)) {
 if (!isset($birthDate)) {
   $response['status'] = StatusResponse::RES_BAD_REQUEST;
   $response['msg'][] = "birthdate required";
-}
+}*/
 
 if (!isset($typeUser)) {
   $response['status'] = StatusResponse::RES_BAD_REQUEST;

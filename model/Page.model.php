@@ -40,4 +40,16 @@ class Page extends Model{
     $mysql->disconect();
     return $data;
   }
+  
+  
+  public static function getByName($name) {
+    $mysql = new MysqlDb();
+    $mysql->conect();
+    
+    $query = "SELECT * FROM " . self::TABLE . " WHERE post_type='page' and post_name='$name'";
+    self::printQuery($query);
+    $data = $mysql->fetch_single($query);
+    $mysql->disconect();
+    return $data;
+  }
 }

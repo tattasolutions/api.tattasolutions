@@ -1,5 +1,6 @@
 <?php
-error_reporting(E_ALL & ~E_NOTICE);
+//error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ERROR);
 
 require_once "utils/AuthToken.class.php";
 require_once "utils/StatusResponse.class.php";
