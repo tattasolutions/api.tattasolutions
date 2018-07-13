@@ -19,9 +19,7 @@ class ProductMeta extends Model{
     foreach ($data as $key => $value) {
       try{
         $data[$key]['meta_value'] = unserialize($data[$key]['meta_value']);
-      }catch(Exception $e) {
-        $data[$key]['meta_value'] = $data[$key]['meta_value'];
-      }
+      }catch(Exception $e) {}
       
       $dataParse[$value['meta_key']] = $data[$key];
     }

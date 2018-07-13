@@ -26,6 +26,12 @@ if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) {
 const MITTENTE_MAIL = "info@unmanned4you.com";
 const MITTENTE_NAME = "UnManned4You not replay";
 
+const SITE_URL = "https://unmanned4you.it";
+const API_URL = "/wp-json/wc/v2/";
+
+const CONSUMER_KEY = "ck_0fa573af68d2c5b9cbdcccb995c437add0cf6b40";
+const CONSUMER_SECRET = "cs_9ea01da039ab9e8d9aacdf9ed537d79cb9b05b30";
+
 function p($data) {
   echo "<pre>";
   print_r($data);

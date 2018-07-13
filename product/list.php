@@ -15,30 +15,23 @@ if ($response['status'] == ""){
   $listProduct = Product::getListProduct();
   $listUserProduct = [];
   $listCategory = [];
-  foreach ($listProduct as $key => $product) {
-    //--- meta product ---
-    $ProductMeta = ProductMeta::getProductMetaByProductId($product['ID']);
-    foreach ($metaProduct as $key2 => $value2) {
-      try{
-        $metaProduct[$key2]['meta_value'] = unserialize($metaProduct[$key2]['meta_value']);
-      } catch (Exception $e) {
-        $metaProduct[$key2]['meta_value'] = $metaProduct[$key2]['meta_value'];
-      }
-      
-    }
-    $listProduct[$key]['metaData'] = $metaProduct;
-    
+  foreach ($listProduct as $keyListProduct => $valueListProduct) {
     //--- category ---
-    $listProductCategory = ProductCategory::getByProduct($product['ID']);
+    $listProductCategory = ProductCategory::getByProduct($valueListProduct['ID']);
     foreach ($listProductCategory as $keyProductCategory => $valueProductCategory){
-      $listProduct[$key]['category'][] = $valueProductCategory['term_taxonomy_id'];
+      $listProduct[$keyListProduct]['category'][] = $valueProductCategory['term_taxonomy_id'];
       if (!isset($listCategory[$valueProductCategory['term_taxonomy_id']])) {
         $listCategory[$valueProductCategory['term_taxonomy_id']] = Category::getById($valueProductCategory['term_taxonomy_id']);
       }
     }
-
+    if($listProductCategory) {
+      $listProduct[$keyListProduct]['category'] = $productCategory['term_taxonomy_id'];
+      if (!isset($listCategory[$listProduct[$keyListProduct]['category']])) {
+        $listCategory[$listProduct[$keyListProduct]['category']] = Category::getById($listProduct[$keyListProduct]['category']);
+      }
+    }
     //--- author ---
-    $idUserProduct = $product['post_author'];
+    $idUserProduct = $valueListProduct['post_author'];
     if (!isset($listUserProduct[$idUserProduct])) {
       $listUserProduct[$idUserProduct] = User::getById($idUserProduct);
     }
