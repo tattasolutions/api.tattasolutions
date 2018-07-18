@@ -43,6 +43,44 @@ for($i=0; $i<count($listProduct); $i++){
   if(isset($filter["Wingspan"]) && (!isset($product['attributesParse']['Wingspan']) || !in_array($filter["Wingspan"], $product['attributesParse']['Wingspan']))){
     continue;
   }
+
+  if(isset($filter["WingspanMin"])){
+    $found = false;
+    foreach ($product['attributesParse']['Wingspan'] as $key => $wingspanValue) {
+      if ($wingspanValue >= $filter["WingspanMin"]) {
+        if(isset($filter["WingspanMax"])) {
+          if ($wingspanValue <= $filter["WingspanMax"]) {
+            $found = true;
+          }
+        } else {
+          $found = true;
+        }
+      }
+    }
+    
+    if(!$found) {
+      continue;
+    }
+  }
+  
+  if(isset($filter["WingspanMax"])){
+    $found = false;
+    foreach ($product['attributesParse']['Wingspan'] as $key => $wingspanValue) {
+      if ($wingspanValue <= $filter["WingspanMax"]) {
+        if(isset($filter["WingspanMin"])) {
+          if ($wingspanValue >= $filter["WingspanMin"]) {
+            $found = true;
+          }
+        } else {
+          $found = true;
+        }
+      }
+    }
+    
+    if(!$found) {
+      continue;
+    }
+  }
   
   //--- operation ---
   if(isset($filter["Endurance"]) && (!isset($product['attributesParse']['Endurance']) || !in_array($filter["Endurance"], $product['attributesParse']['Endurance']))){
