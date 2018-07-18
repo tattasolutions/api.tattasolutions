@@ -1,9 +1,10 @@
 <?php
-require_once "callApi.class.php";
+require_once "../config.php";
+require_once "../utils/callApi.class.php";
 
 $filter = $_REQUEST;
 
-$url = "https://unmanned4you.it/wp-json/wc/v2/products/?consumer_key=ck_0fa573af68d2c5b9cbdcccb995c437add0cf6b40&consumer_secret=cs_9ea01da039ab9e8d9aacdf9ed537d79cb9b05b30";
+$url = SITE_URL . API_URL . "products/?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
 $listProduct = CallAPI("GET", $url);
 $listProduct = json_decode($listProduct, true);
 
@@ -72,5 +73,14 @@ for($i=0; $i<count($listProduct); $i++){
   $listProductFilter[] = $product;
 }
 
+if(empty($listProductFilter)) {
+  $response['status'] = StatusResponse::RES_NO_RESULT;
+  $response['msg'][] = "not exists product";
+} else {
+  $response['status'] = StatusResponse::RES_OK;
+  $response['msg'][] = "ok";
+  $response['data'] = $listProductFilter;
+}
+
 header('Content-Type: application/json');
-echo json_encode($listProductFilter);
+echo json_encode($response);

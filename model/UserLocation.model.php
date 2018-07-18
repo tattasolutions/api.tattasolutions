@@ -40,23 +40,39 @@ class UserLocation extends Model{
     return $data;
   }
   
-
-  
-  //$cf, $name, $surname, $address, $birthDate, $typeUser, $typeManifactur, $typePilot
-  public static function insert($username, $mail, $password, $niceName, $displayName, $activationKey) {
+  public static function insert($userId, $lat, $lon) {
     $mysql = new MysqlDb();
     $mysql->conect();
     
     $query =
       "INSERT INTO " . self::TABLE .
-      "(`user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_activation_key`, `user_status`, `display_name`, `user_registered`) " .
+      "(`idUser`, `lat`, `lon`) " .
       "VALUES " .
-      "('" . $username . "','" . $password . "','" . $niceName . "','" . $mail . "','', '" . $activationKey . "','0', '" . $displayName . "', CURDATE())";
+      "('" . $userId . "','" . $lat . "','" . $lon . "')";
     self::printQuery($query);
     $result = $mysql->query($query);
     if ($result) {
-      $result = self::getUserByUsername($username);
+      $result = self::getByUserId($userId);
     }
+    
+    $mysql->disconect();
+    return $result;
+  }
+
+  public static function update($userId, $lat, $lon) {
+    $mysql = new MysqlDb();
+    $mysql->conect();
+    
+    $query =
+      "UPDATE " . self::TABLE . " SET " .
+      "lat = '" . $lat . "', " .
+      "lon = '" . $lon . "' " .
+      "WHERE idUser = '" . $userId ."'";
+    self::printQuery($query);
+    
+    $mysql->query($query);
+    
+    $result = self::getByUserId($userId);
     
     $mysql->disconect();
     return $result;

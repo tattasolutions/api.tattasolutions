@@ -1,6 +1,7 @@
 <?php
 require_once "../config.php";
 require_once "../model/UserLocation.model.php";
+require_once "../model/RateOrder.model.php";
 require_once "../utils/callApi.class.php";
 
 extract($_REQUEST);
@@ -24,48 +25,95 @@ if (!isset($delta)) {
 }
 
 
-if ($response['status'] == ""){
+if ($response['status'] == "") {
   
-  
+  //list service rent (16)
   $url = SITE_URL . API_URL . "products/?category=16&consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
   $listProduct = CallAPI("GET", $url);
-  
   $listProduct = json_decode($listProduct, true);
   
+  
   if ($listProduct) {
-    $listUserProductSelect = [];
-    foreach ($listProduct as $keyProduct => $product) {
-      foreach ($product['meta_data'] as $keyMeta => $meta) {
-        if ($meta['key'] == "eg-user") {
-          $idUser = $meta['value'];
-          $userLocation = UserLocation::getByUserId($idUser);
+    
+    /*$lonStart = $lon - $delta;
+    $lonEnd = $lon + $delta;
+    $latStart = $lat - $delta;
+    $latEnd = $lat + $delta;*/
+  
+    $raggio = 6378137;
+    $delta = $delta * 1000;
+  
+    $dLat = $delta/$raggio;
+    $dLon = $delta/($raggio * cos(pi()*$lat/180));
+  
+    $lonStart = $lon - $dLon * 180 / pi();
+    $lonEnd   = $lon + $dLon * 180 / pi();
+    $latStart = $lat - $dLat * 180 / pi();
+    $latEnd   = $lat + $dLat * 180 / pi();
+  
+    $listUser = UserLocation::getByPosition($lonStart, $lonEnd, $latStart, $latEnd);
+    
+    $listResult = [];
+    
+    foreach ($listUser as $keyListUser => $valueListUser) {
+      
+      foreach ($listProduct as $keyProduct => $product) {
+        
+        $idUser = findIdUserFromMetaProduct($product['meta_data']);
+        
+        if ($idUser == $valueListUser['idUser']) {
+  
+          //info user
+          $url = SITE_URL . API_URL . "customers/" . $idUser . "?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
+          $user = CallAPI("GET", $url);
+          $user = json_decode($user, true);
           
-          if ($userLocation) {
-            $lon        = $userLocation["lon"];
-            $lat        = $userLocation["lat"];
-            $lonStart   = $lon - $delta;
-            $lonEnd     = $lon + $delta;
-            $latStart   = $lat - $delta;
-            $latEnd     = $lat + $delta;
+          if ($user) {
             
-            if ($lon >= $lonStart && $lon <= $lonEnd && $lat >= $latStart && $lat <= $latEnd) {
-              $listUserProductSelect[$idUser][] = $product;
+            if (isset($listResult[$idUser])) {
+              $singleResult = $listResult[$idUser];
+              $singleResult['products'][$product['id']] = $product;
+            } else {
+              $singleResult = [];
+              $singleResult['user'] = $user;
+              $singleResult['position'] = $valueListUser;
+              $singleResult['products'] = [];
+              $singleResult['products'][$product['id']] = $product;
+              $singleResult['rate'] = RateOrder::getByCustomerId($idUser, true);
             }
+  
+            $listResult[$idUser] = $singleResult;
           }
         }
       }
     }
+    $response['status'] = StatusResponse::RES_OK;
+    $response['msg'][] = "ok";
+    $response['data'] = $listResult;
     
-     $response['status'] = StatusResponse::RES_OK;
-     $response['msg'][] = "ok";
-     $response['data'] = $listUserProductSelect;
-   } else {
+  }else {
     $response['status'] = StatusResponse::RES_NO_AUTH;
-    $response['msg'][] = "wrong credetial";
+    $response['msg'][] = "not exists rent product";
   }
 }
 
 $response = json_encode($response);
+header('Content-Type: application/json');
 echo $response;
+
+
+function findIdUserFromMetaProduct($metaProduct) {
+  
+  foreach ($metaProduct as $key => $value) {
+    
+    if ($value['key'] == "eg-user") {
+      $idUser = $value['value'];
+      return $idUser;
+      
+    }
+  }
+  
+  return null;
+}
 
 ?>

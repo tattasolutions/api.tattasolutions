@@ -9,3 +9,8 @@ http://localhost/api.tattasolutions/user/recoverPassword.php?mail=aaaa@aaa.aa
 http://localhost/api.tattasolutions/user/register.php
 ?username=rocco&mail=rocco.siffredi@trentatre.com&password=vagina
 &cf=1234567890&name=rocco&surname=siffredi&address=via xxx n. 100&birthDate=10/10/1950&typeUser=1&typeManifactur=0&typePilot=1
+
+
+--- get rent by position ---
+http://localhost/api.tattasolutions/userLocation/userLocation.php?lat=1&lon=1&delta=5
+http://localhost/api.tattasolutions/userLocation/insert.php?userId=46&lat=123&lon=458

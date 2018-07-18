@@ -17,9 +17,9 @@ if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) {
   define('DB_NAME', 'unmanned_database');
 } else {
   define('DB_HOST', 'localhost');
-  define('DB_USER', 'unmanned_api');
+  define('DB_USER', 'u4yitaly_gb');
   define('DB_PASS', 'eGSFZ9Op#NZ%');
-  define('DB_NAME', 'unmanned_database');
+  define('DB_NAME', 'u4yitaly_wp384');
 }
 
 
