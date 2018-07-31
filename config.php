@@ -1,12 +1,14 @@
 <?php
-//error_reporting(E_ALL & ~E_NOTICE);
-error_reporting(E_ERROR);
+error_reporting(E_ALL & ~E_NOTICE);
+//error_reporting(E_ERROR);
 
 require_once "utils/AuthToken.class.php";
 require_once "utils/StatusResponse.class.php";
 require_once "utils/PasswordHash.class.php";
 
 const PRINT_QUERY = false;
+
+const DEFAULT_LANG = "en";
 
 const PREFIX_TABLE = "u4y_";
 const EXPIRE_PERIOD = 10*24*60*60;
@@ -31,6 +33,7 @@ const API_URL = "/wp-json/wc/v2/";
 
 const CONSUMER_KEY = "ck_0fa573af68d2c5b9cbdcccb995c437add0cf6b40";
 const CONSUMER_SECRET = "cs_9ea01da039ab9e8d9aacdf9ed537d79cb9b05b30";
+const CONSUMER_AUTH = "consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
 
 function p($data) {
   echo "<pre>";

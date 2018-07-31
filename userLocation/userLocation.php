@@ -9,6 +9,10 @@ extract($_REQUEST);
 $response = [];
 $response['status'] = "";
 
+$language = isset($_REQUEST["lang"]) ? $_REQUEST["lang"] : DEFAULT_LANG;
+$perPage = (isset($_REQUEST["per_page"])) ? $_REQUEST["per_page"] : 100;
+
+/*
 if (!isset($lat)) {
   $response['status'] = StatusResponse::RES_BAD_REQUEST;
   $response['msg'][] = "lat required";
@@ -22,16 +26,15 @@ if (!isset($lon)) {
 if (!isset($delta)) {
   $response['status'] = StatusResponse::RES_BAD_REQUEST;
   $response['msg'][] = "delta required";
-}
+}*/
 
 
 if ($response['status'] == "") {
   
   //list service rent (16)
-  $url = SITE_URL . API_URL . "products/?category=16&consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
+  $url = SITE_URL . API_URL . "products/?per_page=" . $perPage . "&category=16&consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET . "&lang=" . $language;
   $listProduct = CallAPI("GET", $url);
   $listProduct = json_decode($listProduct, true);
-  
   
   if ($listProduct) {
     
@@ -50,10 +53,11 @@ if ($response['status'] == "") {
     $lonEnd   = $lon + $dLon * 180 / pi();
     $latStart = $lat - $dLat * 180 / pi();
     $latEnd   = $lat + $dLat * 180 / pi();
-  
-    $listUser = UserLocation::getByPosition($lonStart, $lonEnd, $latStart, $latEnd);
-    
-    $listResult = [];
+	
+	  //$listUser = UserLocation::getByPosition($lonStart, $lonEnd, $latStart, $latEnd);
+	  $listUser = UserLocation::getAll();
+	
+	  $listResult = [];
     
     foreach ($listUser as $keyListUser => $valueListUser) {
       
@@ -62,9 +66,9 @@ if ($response['status'] == "") {
         $idUser = findIdUserFromMetaProduct($product['meta_data']);
         
         if ($idUser == $valueListUser['idUser']) {
-  
+	
           //info user
-          $url = SITE_URL . API_URL . "customers/" . $idUser . "?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
+          $url = SITE_URL . API_URL . "customers/" . $idUser . "?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET . "&lang=" . $language;
           $user = CallAPI("GET", $url);
           $user = json_decode($user, true);
           

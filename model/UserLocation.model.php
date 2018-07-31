@@ -28,7 +28,17 @@ class UserLocation extends Model{
     $mysql->disconect();
     return $data;
   }
-  
+	public static function getAll() {
+		$mysql = new MysqlDb();
+		$mysql->conect();
+		
+		$query = "SELECT * FROM " . self::TABLE;
+		self::printQuery($query);
+		$data = $mysql->fetch_array($query);
+		$mysql->disconect();
+		return $data;
+	}
+	
   public static function getByPosition($lonStart, $lonEnd, $latStart, $latEnd) {
     $mysql = new MysqlDb();
     $mysql->conect();

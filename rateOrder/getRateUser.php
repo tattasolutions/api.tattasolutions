@@ -6,6 +6,8 @@ require_once "../utils/callApi.class.php";
 
 extract($_REQUEST);
 
+$language = isset($_REQUEST["lang"]) ? $_REQUEST["lang"] : DEFAULT_LANG;
+
 $response = [];
 $response['status'] = "";
 
@@ -21,7 +23,7 @@ if ($response['status'] == ""){
   if($rateOrder){
     
     //info user
-    $url = SITE_URL . API_URL . "customers/" . $idUser . "?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
+    $url = SITE_URL . API_URL . "customers/" . $idUser . "?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET . "&lang=" . $language;
     $user = CallAPI("GET", $url);
     $user = json_decode($user, true);
     $rateOrder['user'] = $user;

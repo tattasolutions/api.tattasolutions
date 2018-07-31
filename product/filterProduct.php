@@ -4,7 +4,10 @@ require_once "../utils/callApi.class.php";
 
 $filter = $_REQUEST;
 
-$url = SITE_URL . API_URL . "products/?consumer_key=" . CONSUMER_KEY . "&consumer_secret=" . CONSUMER_SECRET;
+$language = isset($_REQUEST["lang"]) ? $_REQUEST["lang"] : DEFAULT_LANG;
+$perPage = (isset($filter["per_page"])) ? $filter["per_page"] : 100;
+
+$url = SITE_URL . API_URL . "products/?category=17&per_page=" . $perPage . "&" . CONSUMER_AUTH . "&lang=" . $language;
 $listProduct = CallAPI("GET", $url);
 $listProduct = json_decode($listProduct, true);
 
@@ -21,89 +24,116 @@ for($i=0; $i<count($listProduct); $i++){
     continue;
   }
   
-  if(count($product['attributes'])==0) {
-    continue;
-  }
+  //if(count($product['attributes'])==0) {
+  //  continue;
+  //}
   
   for($j=0; $j<count($product['attributes']); $j++) {
     $attribute = $product['attributes'][$j];
-  
-    $product['attributesParse'][$attribute['name']] = $attribute['options'];
+    $product['attributesParse'][$attribute['name']] = $attribute['options'][0];
   }
   
-  //--- hardware ---
-  if(isset($filter["Type"]) && (!isset($product['attributesParse']['Type']) || !in_array($filter["Type"], $product['attributesParse']['Type']))){
-    continue;
-  }
-  
-  if(isset($filter["Weight"]) && (!isset($product['attributesParse']['Weight']) || !in_array($filter["Weight"], $product['attributesParse']['Weight']))){
-    continue;
-  }
-  
-  if(isset($filter["Wingspan"]) && (!isset($product['attributesParse']['Wingspan']) || !in_array($filter["Wingspan"], $product['attributesParse']['Wingspan']))){
+  //-------------------------------
+  //--- hardware ------------------
+  //-------------------------------
+  if(isset($filter["Type"]) && (!isset($product['attributesParse']['Type']) || $filter["Type"]!=$product['attributesParse']['Type'])){
     continue;
   }
 
-  if(isset($filter["WingspanMin"])){
-    $found = false;
-    foreach ($product['attributesParse']['Wingspan'] as $key => $wingspanValue) {
-      if ($wingspanValue >= $filter["WingspanMin"]) {
-        if(isset($filter["WingspanMax"])) {
-          if ($wingspanValue <= $filter["WingspanMax"]) {
-            $found = true;
-          }
-        } else {
-          $found = true;
-        }
-      }
-    }
-    
-    if(!$found) {
-      continue;
-    }
-  }
-  
-  if(isset($filter["WingspanMax"])){
-    $found = false;
-    foreach ($product['attributesParse']['Wingspan'] as $key => $wingspanValue) {
-      if ($wingspanValue <= $filter["WingspanMax"]) {
-        if(isset($filter["WingspanMin"])) {
-          if ($wingspanValue >= $filter["WingspanMin"]) {
-            $found = true;
-          }
-        } else {
-          $found = true;
-        }
-      }
-    }
-    
-    if(!$found) {
-      continue;
-    }
-  }
-  
-  //--- operation ---
-  if(isset($filter["Endurance"]) && (!isset($product['attributesParse']['Endurance']) || !in_array($filter["Endurance"], $product['attributesParse']['Endurance']))){
+  //--- Weight ---
+  if(isset($filter["Weight"]) && (!isset($product['attributesParse']['Weight']) || $filter["Weight"]!=$product['attributesParse']['Weight'])){
     continue;
   }
   
-  if(isset($filter["MaximumCeiling"]) && (!isset($product['attributesParse']['Maximum Ceiling']) || !in_array($filter["MaximumCeiling"], $product['attributesParse']['Maximum Ceiling']))){
+  if(isset($filter["WeightMin"]) && (!isset($product['attributesParse']['Weight']) || $filter["WeightMin"]>$product['attributesParse']['Weight'])){
     continue;
   }
   
-  if(isset($filter["PreFlightSetupTime"]) && (!isset($product['attributesParse']['Pre-flight setup time']) || !in_array($filter["PreFlightSetupTime"], $product['attributesParse']['Pre-flight setup time']))){
+  if(isset($filter["WeightMax"]) && (!isset($product['attributesParse']['Weight']) || $filter["WeightMax"]<$product['attributesParse']['Weight'])){
     continue;
   }
   
-  if(isset($filter["Range"]) && (!isset($product['attributesParse']['Range']) || !in_array($filter["Range"], $product['attributesParse']['Range']))){
+  //--- Wingspan ---
+  if(isset($filter["Wingspan"]) && (!isset($product['attributesParse']['Wingspan']) || $filter["Wingspan"]!=$product['attributesParse']['Wingspan'])){
     continue;
   }
   
-  if(isset($filter["CruiseSpeed"]) && (!isset($product['attributesParse']['Cruise Speed']) || !in_array($filter["CruiseSpeed"], $product['attributesParse']['Cruise Speed']))){
+  if(isset($filter["WingspanMin"]) && (!isset($product['attributesParse']['Wingspan']) || $filter["WingspanMin"]>$product['attributesParse']['Wingspan'])){
     continue;
   }
   
-  if(isset($filter["TakeOffType"]) && (!isset($product['attributesParse']['Take-off Type']) || !in_array($filter["TakeOffType"], $product['attributesParse']['Take-off Type']))){
+  if(isset($filter["WingspanMax"]) && (!isset($product['attributesParse']['Wingspan']) || $filter["WingspanMax"]<$product['attributesParse']['Wingspan'])){
+    continue;
+  }
+  //-------------------------------
+  //--- operation -----------------
+  //-------------------------------
+  //--- Endurance ---
+  if(isset($filter["Endurance"]) && (!isset($product['attributesParse']['Endurance']) || $filter["Endurance"]!=$product['attributesParse']['Endurance'])){
+    continue;
+  }
+  
+  if(isset($filter["EnduranceMin"]) && (!isset($product['attributesParse']['Endurance']) || $filter["EnduranceMin"]>$product['attributesParse']['Endurance'])){
+    continue;
+  }
+  
+  if(isset($filter["EnduranceMax"]) && (!isset($product['attributesParse']['Endurance']) || $filter["EnduranceMax"]<$product['attributesParse']['Endurance'])){
+    continue;
+  }
+  
+  //--- MaximumCeiling ---
+  if(isset($filter["MaximumCeiling"]) && (!isset($product['attributesParse']['MaximumCeiling']) || $filter["MaximumCeiling"]!=$product['attributesParse']['MaximumCeiling'])){
+    continue;
+  }
+  
+  if(isset($filter["MaximumCeilingMin"]) && (!isset($product['attributesParse']['MaximumCeiling']) || $filter["MaximumCeilingMin"]>$product['attributesParse']['MaximumCeiling'])){
+    continue;
+  }
+  
+  if(isset($filter["MaximumCeilingMax"]) && (!isset($product['attributesParse']['MaximumCeiling']) || $filter["MaximumCeilingMax"]<$product['attributesParse']['MaximumCeiling'])){
+    continue;
+  }
+  
+  //--- PreFlightSetupTime ---
+  if(isset($filter["PreFlightSetupTime"]) && (!isset($product['attributesParse']['PreFlightSetupTime']) || $filter["PreFlightSetupTime"]!=$product['attributesParse']['PreFlightSetupTime'])){
+    continue;
+  }
+  
+  if(isset($filter["PreFlightSetupTimeMin"]) && (!isset($product['attributesParse']['PreFlightSetupTime']) || $filter["PreFlightSetupTimeMin"]>$product['attributesParse']['PreFlightSetupTime'])){
+    continue;
+  }
+  
+  if(isset($filter["PreFlightSetupTimeMax"]) && (!isset($product['attributesParse']['PreFlightSetupTime']) || $filter["PreFlightSetupTimeMax"]<$product['attributesParse']['PreFlightSetupTime'])){
+    continue;
+  }
+  
+  //--- Range ---
+  if(isset($filter["Range"]) && (!isset($product['attributesParse']['Range']) || $filter["Range"]!=$product['attributesParse']['Range'])){
+    continue;
+  }
+  
+  if(isset($filter["RangeMin"]) && (!isset($product['attributesParse']['Range']) || $filter["RangeMin"]>$product['attributesParse']['Range'])){
+    continue;
+  }
+  
+  if(isset($filter["RangeMax"]) && (!isset($product['attributesParse']['Range']) || $filter["RangeMax"]<$product['attributesParse']['Range'])){
+    continue;
+  }
+  
+  //--- CruiseSpeed ---
+  if(isset($filter["CruiseSpeed"]) && (!isset($product['attributesParse']['CruiseSpeed']) || $filter["CruiseSpeed"]!=$product['attributesParse']['CruiseSpeed'])){
+    continue;
+  }
+  
+  if(isset($filter["CruiseSpeedMin"]) && (!isset($product['attributesParse']['CruiseSpeed']) || $filter["CruiseSpeedMin"]>$product['attributesParse']['CruiseSpeed'])){
+    continue;
+  }
+  
+  if(isset($filter["CruiseSpeedMax"]) && (!isset($product['attributesParse']['CruiseSpeed']) || $filter["CruiseSpeedMax"]<$product['attributesParse']['CruiseSpeed'])){
+    continue;
+  }
+  
+  if(isset($filter["TakeOffType"]) && (!isset($product['attributesParse']['Take-off Type']) || $filter["TakeOffType"]!=$product['attributesParse']['Take-off Type'])){
     continue;
   }
   
